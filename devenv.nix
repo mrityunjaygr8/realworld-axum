@@ -9,7 +9,7 @@
   env.GREET = "devenv";
 
   # https://devenv.sh/packages/
-  packages = [pkgs.git];
+  packages = with pkgs; [git openssl];
 
   # https://devenv.sh/languages/
   languages.rust.enable = true;

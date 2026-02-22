@@ -1,18 +1,52 @@
-use axum::{Json, Router, routing::get};
-use serde_json::{Value, json};
+mod auth;
+mod handlers;
+mod models;
+mod repositories;
+mod schemas;
+mod state;
+
+use std::env;
+
+use axum::{
+    Router,
+    routing::{get, post},
+};
+
+use state::AppState;
+
+use crate::handlers::{
+    auth::{current_user, login, register},
+    health::health_check,
+};
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/health", get(health_check));
+    dotenvy::dotenv().ok();
+    let database_url =
+        env::var("DATABASE_URL").expect("DATABASE_URL must be set in .env file or environment");
+
+    let app_state = AppState::new(&database_url)
+        .await
+        .expect("Failed to connect to database");
+
+    println!("Connected to database successfully");
+
+    let app = Router::new()
+        .route("/health", get(health_check))
+        .with_state(app_state.clone())
+        .route("/api/users", post(register))
+        .with_state(app_state.clone())
+        .route("/api/users/login", post(login))
+        .with_state(app_state.clone())
+        .route("/api/user", get(current_user))
+        .with_state(app_state);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     println!("Server is running on 0.0.0.0:3000");
+    println!("Available endpoints:");
+    println!("  POST /api/users         - Register new user");
+    println!("  POST /api/users/login   - Login existing user");
+    println!("  GET  /api/user          - Get current user (requires auth)");
+    println!("  GET  /health            - Health check");
     axum::serve(listener, app).await.unwrap();
-}
-
-async fn health_check() -> Json<Value> {
-    Json(json!({
-        "status": "ok",
-        "message": "Server is ok"
-    }))
 }

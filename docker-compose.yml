@@ -1,0 +1,15 @@
+# Use postgres/example user/password credentials
+services:
+  db:
+    image: postgres:latest
+    user: "1000"
+    restart: always
+    # set shared memory limit when using docker compose
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: realworld
+      POSTGRES_DB: realworld
+      POSTGRES_USER: realworld

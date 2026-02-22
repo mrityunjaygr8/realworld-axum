@@ -1,0 +1,5 @@
+name: get current user
+url: http://localhost:3000/api/user
+headers:
+- name: Authorization
+  value: Token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkOTRhN2U0My0wNzRkLTRhMWQtODYxMC0wMzg0ZGQ1MjU0MGUiLCJleHAiOjE3NzE4NDQxNDgsImlhdCI6MTc3MTc1Nzc0OH0.vTvDohUQ32uuMx-98_tddLvW47v8qkFlXEzuLVbthDk
